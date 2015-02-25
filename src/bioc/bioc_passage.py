@@ -1,13 +1,14 @@
 __all__ = ['BioCPassage']
 
-from meta import _MetaAnnotations, _MetaInfons, _MetaOffset, \
-                 _MetaRelations, _MetaText
+from meta import _MetaAnnotations, _MetaInfons, _MetaOffset, _MetaRelations, \
+    _MetaText
 
-class BioCPassage(_MetaAnnotations, _MetaOffset, _MetaText,
-                  _MetaRelations, _MetaInfons):
+
+class BioCPassage(_MetaAnnotations, _MetaOffset, _MetaText, _MetaRelations,
+                  _MetaInfons):
 
     def __init__(self, passage=None):
-        
+
         self.offset = '-1'
         self.text = ''
         self.infons = dict()
@@ -34,12 +35,12 @@ class BioCPassage(_MetaAnnotations, _MetaOffset, _MetaText,
         self.sentences.append(sentence)
 
     def sentences_iterator(self):
-        return self.sentences.iterator() # TBD
+        return self.sentences.iterator()  # TBD
 
     def clear_sentences(self):
         self.relations = list()
 
-    def remove_sentence(self, sentence): # int or obj
+    def remove_sentence(self, sentence):  # int or obj
         if type(sentence) is int:
             self.sentences.remove(self.sentences[sentence])
         else:

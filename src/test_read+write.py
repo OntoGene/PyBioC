@@ -6,6 +6,7 @@ from bioc import BioCWriter
 test_file = '../test_input/bcIVLearningCorpus.xml'
 dtd_file = '../test_input/BioC.dtd'
 
+
 def main():
     bioc_reader = BioCReader(test_file, dtd_valid_file=dtd_file)
     bioc_reader.read()
@@ -20,5 +21,5 @@ def main():
     bioc_writer.write()
     print(bioc_writer)
 
-if  __name__ == '__main__':
+if __name__ == '__main__':
     main()
