@@ -3,8 +3,8 @@
 from bioc import BioCReader
 from bioc import BioCWriter
 
-test_file = '../test_input/bcIVLearningCorpus.xml'
-dtd_file = '../test_input/BioC.dtd'
+test_file = '../test_input/everything-sentence.xml'
+dtd_file = '../BioC.dtd'
 
 
 def main():

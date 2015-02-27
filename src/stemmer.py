@@ -13,7 +13,7 @@ from bioc import BioCReader
 from bioc import BioCWriter
 
 BIOC_IN = '..' + sep + 'test_input' + sep + 'example_input.xml'
-BIOC_OUT = 'example_input_stemmed.xml'
+BIOC_OUT = '..' + sep + 'test_input' + sep + 'example_input_stemmed.xml'
 DTD_FILE = '..' + sep + 'BioC.dtd'
 
 
