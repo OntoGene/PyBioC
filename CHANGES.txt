@@ -1,3 +1,14 @@
+1.02-lf.1
+---------
+Approach PEP8, especially by making implicit relative import explicit.
+Changes by Tilia Ellendorff <ellendorff@ifi.uzh.ch>,
+Max Nanis <max@maxnanis.com>, Lenz Furrer <furrer@cl.uzh.ch>.
+
+1.02
+----
+Don't assume text element in passage must be avilable.
+(Thanks to Adrian van der Lek <avdl@gmx.ch>.)
+
 1.01
 ----
 Fix invalid handling of id attributes for annotation and relation tags.

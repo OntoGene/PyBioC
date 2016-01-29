@@ -2,7 +2,7 @@
 # Package for interoperability in BioCreative work
 #
 
-__version__ = '1.02'
+__version__ = '1.02-lf.1'
 
 __all__ = [
     'BioCAnnotation', 'BioCCollection', 'BioCDocument',

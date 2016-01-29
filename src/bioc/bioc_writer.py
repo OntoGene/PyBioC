@@ -24,15 +24,15 @@ class BioCWriter:
     def __str__(self):
         """ A BioCWriter object can be printed as string.
         """
+        return self._tostring(encoding='unicode')
+
+    def _tostring(self, encoding='UTF-8'):
         self._check_for_data()
 
         self.build()
 
-        # Use `encoding=str` to avoid returning a byte object.
-        # Encode the string when writing to file.
-        # Set the encoding declaration by using self.doctype.
         s = tostring(self.root_tree,
-                     encoding=str,
+                     encoding=encoding,
                      pretty_print=True,
                      doctype=self.doctype)
 
@@ -54,8 +54,8 @@ class BioCWriter:
                 raise(Exception('No output file path provided.'))
             filename = self.filename
 
-        with open(filename, 'w', encoding='utf-8') as f:
-            f.write(str(self))
+        with open(filename, 'wb') as f:
+            f.write(self._tostring(encoding='UTF-8'))
 
     def build(self):
         self._build_collection()
