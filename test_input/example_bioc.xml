@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE collection SYSTEM "BioC.dtd">
+<collection>
+	<source>Example</source>
+	<date>1999-Jan-1</date>
+	<key>PubTator.key</key>
+	<document>
+		<id>20085714</id>
+		<passage>
+			<text>
+            </text>
+			<annotation>
+            </annotation>
+		</passage>
+	</document>
+</collection>
