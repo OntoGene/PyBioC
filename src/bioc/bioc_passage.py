@@ -1,7 +1,7 @@
 __all__ = ['BioCPassage']
 
-from meta import _MetaAnnotations, _MetaInfons, _MetaOffset, \
-                 _MetaRelations, _MetaText
+from .meta import _MetaAnnotations, _MetaInfons, _MetaOffset, \
+                  _MetaRelations, _MetaText
 
 class BioCPassage(_MetaAnnotations, _MetaOffset, _MetaText,
                   _MetaRelations, _MetaInfons):

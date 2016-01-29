@@ -1,8 +1,8 @@
 __all__ = ['BioCSentence']
 
 
-from meta import _MetaAnnotations, _MetaInfons, _MetaOffset, \
-                      _MetaRelations, _MetaText
+from .meta import _MetaAnnotations, _MetaInfons, _MetaOffset, \
+                  _MetaRelations, _MetaText
                       
 
 class BioCSentence(_MetaAnnotations, _MetaInfons, _MetaOffset, 
