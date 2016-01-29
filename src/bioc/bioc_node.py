@@ -1,9 +1,10 @@
 __all__ = ['BioCNode']
 
+
 class BioCNode:
 
     def __init__(self, node=None, refid=None, role=None):
-        
+
         self.refid = ''
         self.role = ''
 
@@ -17,7 +18,7 @@ class BioCNode:
             self.role = role
 
     def __str__(self):
-         s = 'refid: ' + self.refid + '\n'
-         s += 'role: ' + self.role + '\n'
+        s = 'refid: ' + self.refid + '\n'
+        s += 'role: ' + self.role + '\n'
 
-         return s
+        return s

@@ -13,8 +13,9 @@ from bioc import BioCReader
 from bioc import BioCWriter
 
 BIOC_IN = os.path.join('..', 'test_input', 'example_input.xml')
-BIOC_OUT = os.path.join('example_input_stemmed.xml')
+BIOC_OUT = os.path.join('..', 'test_input', 'example_input_stemmed.xml')
 DTD_FILE = os.path.join('..', 'test_input', 'BioC.dtd')
+
 
 def main():
     # Use file defined by BIOC_IN as default if no other provided
@@ -74,5 +75,6 @@ def main():
     # Write to disk
     bioc_writer.write()
 
-if  __name__ == '__main__':
+
+if __name__ == '__main__':
     main()

@@ -3,6 +3,7 @@ __all__ = ['BioCWriter']
 from lxml.builder import E
 from lxml.etree import tostring
 
+
 class BioCWriter:
 
     def __init__(self, filename=None, collection=None):
@@ -60,8 +61,7 @@ class BioCWriter:
         self._build_collection()
 
     def _build_collection(self):
-        self.root_tree = E('collection',
-                            E('source'), E('date'), E('key'))
+        self.root_tree = E('collection', E('source'), E('date'), E('key'))
         self.root_tree.xpath('source')[0].text = self.collection.source
         self.root_tree.xpath('date')[0].text = self.collection.date
         self.root_tree.xpath('key')[0].text = self.collection.key
@@ -69,8 +69,7 @@ class BioCWriter:
         # infon*
         self._build_infons(self.collection.infons, collection_elem)
         # document+
-        self._build_documents(self.collection.documents,
-                                collection_elem)
+        self._build_documents(self.collection.documents, collection_elem)
 
     def _build_infons(self, infons_dict, infons_parent_elem):
         for infon_key, infon_val in infons_dict.items():
@@ -131,8 +130,7 @@ class BioCWriter:
             if len(relation.id) > 0:
                 relation_elem.attrib['id'] = relation.id
 
-    def _build_annotations(self, annotations_list,
-                           annotations_parent_elem):
+    def _build_annotations(self, annotations_list, annotations_parent_elem):
         for annotation in annotations_list:
             annotations_parent_elem.append(E('annotation'))
             annotation_elem = \
