@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # coding: utf8
 
-from setuptools import setup, find_packages
+from distutils.core import setup
 
 with open('README.md') as f:
     readme = f.read()
 
 setup(name='PyBioC',
-      version='1.02-lf.1',
+      version='1.02.1',
       author='Hernani Marques',
       author_email='h2m@access.uzh.ch',
       description='Python library to deal with BioCreative XML data',
       long_description=readme,
-      packages=find_packages())
+      packages=['bioc', 'bioc.meta', 'bioc.compat'],
+      package_dir={'bioc': 'src/bioc'})
