@@ -1,4 +1,4 @@
-1.02-lf.1
+1.02.1
 ---------
 Approach PEP8, especially by making implicit relative import explicit.
 Changes by Tilia Ellendorff <ellendorff@ifi.uzh.ch>,
