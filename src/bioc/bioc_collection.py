@@ -44,6 +44,6 @@ class BioCCollection(_Py2Next, _MetaInfons, _MetaIter):
 
     def remove_document(self, document):
         if isinstance(document, int):
-            self.dcouments.remove(self.documents[document])
+            self.documents.pop(document)
         else:
             self.documents.remove(document)  # TBC

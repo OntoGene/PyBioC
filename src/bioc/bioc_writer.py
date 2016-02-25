@@ -1,7 +1,16 @@
 __all__ = ['BioCWriter']
 
+import sys
+
 from lxml.builder import E
 from lxml.etree import tostring
+
+
+# Resolve Python 2/3 difference regarding the special method __str__().
+if sys.version_info < (3,):
+    STR_ENCODING = 'ascii'
+else:
+    STR_ENCODING = 'unicode'
 
 
 class BioCWriter:
@@ -24,7 +33,7 @@ class BioCWriter:
     def __str__(self):
         """ A BioCWriter object can be printed as string.
         """
-        return self._tostring(encoding='unicode')
+        return self._tostring(encoding=STR_ENCODING)
 
     def _tostring(self, encoding='UTF-8'):
         self._check_for_data()

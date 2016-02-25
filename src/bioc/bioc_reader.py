@@ -33,8 +33,8 @@ class BioCReader:
 
         if dtd_valid_file is not None:
             dtd = etree.DTD(dtd_valid_file)
-            if dtd.validate(self.xml_tree) is False:
-                raise(Exception(dtd.error_log.filter_from_errors()[0]))
+            if not dtd.validate(self.xml_tree):
+                raise Exception(dtd.error_log.filter_from_errors()[0])
 
     def read(self):
         """
@@ -57,9 +57,10 @@ class BioCReader:
         self._read_infons(infon_elem_list, self.collection)
         self._read_documents(document_elem_list)
 
-    def _read_infons(self, infon_elem_list, infons_parent_elem):
+    @staticmethod
+    def _read_infons(infon_elem_list, infons_parent_elem):
         for infon_elem in infon_elem_list:
-            infons_parent_elem.put_infon(self._get_infon_key(infon_elem),
+            infons_parent_elem.put_infon(infon_elem.attrib['key'],
                                          infon_elem.text)
 
     def _read_documents(self, document_elem_list):
@@ -142,6 +143,3 @@ class BioCReader:
                 relation.add_node(node)
 
             relations_parent_elem.add_relation(relation)
-
-    def _get_infon_key(self, elem):
-        return elem.attrib['key']

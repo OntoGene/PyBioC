@@ -28,8 +28,7 @@ class BioCPassage(_MetaAnnotations, _MetaOffset, _MetaText, _MetaRelations,
         return len(self.sentences)
 
     def has_sentences(self):
-        if len(self.sentences) > 0:
-            return True
+        return bool(self.sentences)
 
     def add_sentence(self, sentence):
         self.sentences.append(sentence)
@@ -38,10 +37,10 @@ class BioCPassage(_MetaAnnotations, _MetaOffset, _MetaText, _MetaRelations,
         return self.sentences.iterator()  # TBD
 
     def clear_sentences(self):
-        self.relations = list()
+        self.sentences = list()
 
     def remove_sentence(self, sentence):  # int or obj
         if isinstance(sentence, int):
-            self.sentences.remove(self.sentences[sentence])
+            self.sentences.pop(sentence)
         else:
             self.sentences.remove(sentence)

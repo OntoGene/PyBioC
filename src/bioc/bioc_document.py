@@ -31,7 +31,7 @@ class BioCDocument(_MetaId, _MetaInfons, _MetaRelations, _MetaIter, _Py2Next):
         return self.passages
 
     def get_size(self):
-        return self.passages.size()  # As in Java BioC
+        return sum(p.size() for p in self.passages)  # As in Java BioC
 
     def clear_passages(self):
         self.passages = list()
@@ -41,6 +41,6 @@ class BioCDocument(_MetaId, _MetaInfons, _MetaRelations, _MetaIter, _Py2Next):
 
     def remove_passage(self, passage):
         if isinstance(passage, int):
-            self.passages.remove(self.passages[passage])
+            self.passages.pop(passage)
         else:
             self.passages.remove(passage)  # TBC
