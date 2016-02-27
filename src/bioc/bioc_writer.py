@@ -56,7 +56,7 @@ class BioCWriter:
 
     def _check_for_data(self):
         if self.collection is None:
-            raise(Exception('No data available.'))
+            raise Exception('No data available.')
 
     def write(self, filename=None):
         """ Use this method to write the data in the PyBioC objects
@@ -67,14 +67,15 @@ class BioCWriter:
         """
         if filename is None:
             if self.filename is None:
-                raise(Exception('No output file path provided.'))
+                raise Exception('No output file path provided.')
             filename = self.filename
 
         with open(filename, 'wb') as f:
             f.write(self.tostring(encoding='UTF-8'))
 
     def build(self):
-        self._build_collection()
+        if self.root_tree is None:
+            self._build_collection()
 
     def _build_collection(self):
         self.root_tree = E('collection', E('source'), E('date'), E('key'))
