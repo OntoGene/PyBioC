@@ -33,9 +33,16 @@ class BioCWriter:
     def __str__(self):
         """ A BioCWriter object can be printed as string.
         """
-        return self._tostring(encoding=STR_ENCODING)
+        return self.tostring(encoding=STR_ENCODING)
 
-    def _tostring(self, encoding='UTF-8'):
+    def tostring(self, encoding='UTF-8'):
+        '''
+        Serialize the collection to BioC XML.
+
+        Return an encoded string (a bytes object in Python 3),
+        unless encoding is "unicode", in which case a decoded
+        string is returned (a unicode object in Python 2).
+        '''
         self._check_for_data()
 
         self.build()
@@ -64,7 +71,7 @@ class BioCWriter:
             filename = self.filename
 
         with open(filename, 'wb') as f:
-            f.write(self._tostring(encoding='UTF-8'))
+            f.write(self.tostring(encoding='UTF-8'))
 
     def build(self):
         self._build_collection()
