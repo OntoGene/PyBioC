@@ -73,6 +73,46 @@ class BioCWriter:
         with open(filename, 'wb') as f:
             f.write(self.tostring(encoding='UTF-8'))
 
+    def iterfragments(self, encoding='UTF-8'):
+        '''
+        Iterate over serialised XML fragments.
+
+        Use this for large collections, as it avoids building
+        the whole tree in memory.
+        '''
+        # Temporarily remove the document nodes and reset the root tree.
+        documents = self.collection.documents
+        self.collection.documents = ()
+        self.root_tree = None
+
+        # Construct and serialise the collection-level nodes.
+        # Split them into a head and tail portion.
+        shell = self.tostring(encoding)
+        tail = u'</collection>\n'
+        BOM = ''.encode(encoding)
+        if encoding != 'unicode':
+            tail = tail.encode(encoding).lstrip(BOM)
+        head = shell[:-len(tail)]
+
+        # Yield fragment by fragment.
+        yield head
+
+        step_parent = E('collection')
+        for doc in documents:
+            self._build_documents([doc], step_parent)
+            frag = tostring(step_parent[0],
+                            encoding=encoding,
+                            pretty_print=True,
+                            xml_declaration=False)
+            step_parent.clear()
+            yield frag.lstrip(BOM)
+
+        yield tail
+
+        # Restore the collection object and reset the root tree again.
+        self.collection.documents = documents
+        self.root_tree = None
+
     def build(self):
         if self.root_tree is None:
             self._build_collection()

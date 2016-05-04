@@ -1,3 +1,8 @@
+1.02.4
+------
+New method `BioCWriter.iterfragments()`: Iterate over serialised XML fragments,
+thus avoiding in-memory construction of the complete tree.
+
 1.02.3
 ------
 Make `BioCWriter.tostring()` a public method.
