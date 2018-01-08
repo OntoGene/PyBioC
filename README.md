@@ -1,13 +1,11 @@
-#PyBioC
+# PyBioC
 
-**[PyBioC][1] is a native python library to deal with BioCreative XML data,
-i. e. to read from and to write to it.**
+**[PyBioC][1] is a native Python library for reading and writing BioC XML data.**
 
-More information about BioC available [online][2].
+More information about BioC is available [online][2].
 
-----------
 
-##Usage:
+## Usage
 
 Two example programs, test_read+write.py and stemming.py are shipped in the `src/` folder.
 
@@ -23,7 +21,8 @@ the tokens and transforms the
 manipulated PyBioC objects back to
 valid BioC XML format.
 
-##Example:
+
+## Example
 
 ### Generate BioC object for export
 
