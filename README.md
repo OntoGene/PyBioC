@@ -5,6 +5,15 @@
 More information about BioC is available [online][2].
 
 
+## Installation
+
+Use [`pip`][3]:
+
+    pip install git+https://github.com/OntoGene/PyBioC.git
+
+For Python 3, you might have to type `pip3`.
+
+
 ## Usage
 
 Two example programs, test_read+write.py and stemming.py are shipped in the `src/` folder.
@@ -51,5 +60,6 @@ print writer
 
 
 
-[1]: http://bioc.sourceforge.net/
+[1]: https://github.com/OntoGene/PyBioC
 [2]: http://bioc.sourceforge.net/
+[3]: http://pip.pypa.io/
