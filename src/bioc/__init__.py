@@ -5,9 +5,9 @@
 __version__ = '1.02.4'
 
 __all__ = [
-    'BioCAnnotation', 'BioCCollection', 'BioCDocument',
-    'BioCLocation', 'BioCNode', 'BioCPassage', 'BioCRelation',
-    'BioCSentence', 'BioCReader', 'BioCXMLWriter', 'BioCJSONWriter'
+    'BioCAnnotation', 'BioCCollection', 'BioCDocument', 'BioCLocation',
+    'BioCNode', 'BioCPassage', 'BioCRelation', 'BioCSentence',
+    'BioCXMLReader', 'BioCJSONReader', 'BioCXMLWriter', 'BioCJSONWriter'
     ]
 
 __author__ = 'Hernani Marques (h2m@access.uzh.ch)'
@@ -20,6 +20,7 @@ from .bioc_node import BioCNode
 from .bioc_passage import BioCPassage
 from .bioc_relation import BioCRelation
 from .bioc_sentence import BioCSentence
-from .bioc_reader import BioCReader
+from .bioc_reader import BioCXMLReader
+from .bioc_reader import BioCJSONReader
 from .bioc_writer import BioCXMLWriter
 from .bioc_writer import BioCJSONWriter

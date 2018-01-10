@@ -9,7 +9,7 @@ from nltk.tokenize import wordpunct_tokenize
 from nltk import PorterStemmer
 
 from bioc import BioCAnnotation
-from bioc import BioCReader
+from bioc import BioCXMLReader
 from bioc import BioCXMLWriter
 
 BIOC_IN = os.path.join('..', 'test_input', 'example_input.xml')
@@ -23,9 +23,9 @@ def main():
     if len(sys.argv) >= 2:
         bioc_in = sys.argv[1]
 
-    # A BioCReader object is put in place to hold the example BioC XML
+    # A BioCXMLReader object is put in place to hold the example BioC XML
     # document
-    bioc_reader = BioCReader(bioc_in, dtd_valid_file=DTD_FILE)
+    bioc_reader = BioCXMLReader(bioc_in, dtd_valid_file=DTD_FILE)
 
     # A BioCXMLWRiter object is prepared to write out the annotated data
     bioc_writer = BioCXMLWriter(BIOC_OUT)
@@ -34,7 +34,7 @@ def main():
     stemmer = PorterStemmer()
 
     # The example input file given above (by BIOC_IN) is fed into
-    # a BioCReader object; validation is done by the BioC DTD
+    # a BioCXMLReader object; validation is done by the BioC DTD
     bioc_reader.read()
 
     # Pass over basic data

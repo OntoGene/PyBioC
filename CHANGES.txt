@@ -1,3 +1,8 @@
+2.0
+---
+New reader and writer for BioC JSON, based on the converter by Don Comeau (https://github.com/ncbi-nlp/BioC-JSON).
+Renamed the existing, XML-based BioCReader and BioCWriter to BioCXMLReader and BioCXMLWriter, respectively.
+
 1.02.4
 ------
 New method `BioCWriter.iterfragments()`: Iterate over serialised XML fragments,

@@ -1,4 +1,7 @@
-__all__ = ['BioCReader']
+__all__ = ['BioCXMLReader', 'BioCJSONReader']
+
+import io
+import json
 
 from lxml import etree
 
@@ -12,12 +15,10 @@ from .bioc_node import BioCNode
 from .bioc_relation import BioCRelation
 
 
-class BioCReader(object):
+class BioCXMLReader(object):
     """
-    This class can be used to store BioC XML files in PyBioC objects,
-    for further manipulation.
+    Reader for parsing BioC XML files into BioC* objects.
     """
-
     def __init__(self, source, dtd_valid_file=None):
         """
         source:             File path to a BioC XML input document.
@@ -140,3 +141,35 @@ class BioCReader(object):
                 relation.add_node(node)
 
             relations_parent_elem.add_relation(relation)
+
+
+
+class BioCJSONReader(object):
+    '''
+    Reader for parsing BioC JSON files into BioC* objects.
+    '''
+    def __init__(self, source):
+        self.source = source
+        self.collection = None
+
+    def read(self):
+        '''
+        Read self.source and save the result to self.collection.
+        '''
+        with io.open(self.source, encoding='utf-8') as f:
+            dict_ = json.load(f)
+        self.collection = self._read_dict(BioCCollection, dict_)
+
+    def _read_dict(self, class_, dict_):
+        obj = class_()
+        for label, value in dict_.items():
+            if label in ('offset', 'length'):
+                # The converter in Don Comeau's reference implementation
+                # converts offset and length to strings, too.
+                value = str(value)
+            elif isinstance(value, list):
+                # Get the class from the label (eg. "documents" -> BioCDocument).
+                class_ = globals()['BioC{}'.format(label.rstrip('s').title())]
+                value = [self._read_dict(class_, d) for d in value]
+            setattr(obj, label, value)
+        return obj
