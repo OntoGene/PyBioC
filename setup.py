@@ -7,7 +7,7 @@ with open('README.md') as f:
     readme = f.read()
 
 setup(name='PyBioC',
-      version='1.02.4',
+      version='2.0',
       author='Hernani Marques',
       author_email='h2m@access.uzh.ch',
       description='Python library for working with BioC XML data',

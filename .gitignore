@@ -1,2 +1,3 @@
 *.pyc
 src/output_bioc.xml
+src/output_bioc.json

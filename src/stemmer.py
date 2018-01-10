@@ -10,7 +10,7 @@ from nltk import PorterStemmer
 
 from bioc import BioCAnnotation
 from bioc import BioCReader
-from bioc import BioCWriter
+from bioc import BioCXMLWriter
 
 BIOC_IN = os.path.join('..', 'test_input', 'example_input.xml')
 BIOC_OUT = os.path.join('..', 'test_input', 'example_input_stemmed.xml')
@@ -27,8 +27,8 @@ def main():
     # document
     bioc_reader = BioCReader(bioc_in, dtd_valid_file=DTD_FILE)
 
-    # A BioCWRiter object is prepared to write out the annotated data
-    bioc_writer = BioCWriter(BIOC_OUT)
+    # A BioCXMLWRiter object is prepared to write out the annotated data
+    bioc_writer = BioCXMLWriter(BIOC_OUT)
 
     # The NLTK porter stemmer is used for stemming
     stemmer = PorterStemmer()
