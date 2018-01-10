@@ -1,7 +1,5 @@
 __all__ = ['BioCReader']
 
-from io import StringIO
-
 from lxml import etree
 
 from .bioc_annotation import BioCAnnotation
@@ -14,7 +12,7 @@ from .bioc_node import BioCNode
 from .bioc_relation import BioCRelation
 
 
-class BioCReader:
+class BioCReader(object):
     """
     This class can be used to store BioC XML files in PyBioC objects,
     for further manipulation.
@@ -26,7 +24,6 @@ class BioCReader:
         dtd_valid_file:     File path to a BioC.dtd file. Using this
                             optional argument ensures DTD validation.
         """
-
         self.source = source
         self.collection = BioCCollection()
         self.xml_tree = etree.parse(source)
@@ -88,7 +85,7 @@ class BioCReader:
                 # Is the (optional) text element available?
                 try:
                     passage.text = passage_elem.xpath('text')[0].text
-                except:
+                except (IndexError, AttributeError):
                     pass
                 self._read_annotations(passage_elem.xpath('annotation'),
                                        passage)

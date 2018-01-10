@@ -13,25 +13,23 @@ else:
     STR_ENCODING = 'unicode'
 
 
-class BioCWriter:
+class BioCWriter(object):
+    '''
+    XML serializer for BioC objects.
+    '''
+
+    doctype = "<!DOCTYPE collection SYSTEM 'BioC.dtd'>"
 
     def __init__(self, filename=None, collection=None):
 
         self.root_tree = None
 
-        self.collection = None
-        self.doctype = '''<?xml version='1.0' encoding='UTF-8'?>'''
-        self.doctype += '''<!DOCTYPE collection SYSTEM 'BioC.dtd'>'''
+        self.collection = collection
         self.filename = filename
 
-        if collection is not None:
-            self.collection = collection
-
-        if filename is not None:
-            self.filename = filename
-
     def __str__(self):
-        """ A BioCWriter object can be printed as string.
+        """
+        A BioCWriter object can be printed as string.
         """
         return self.tostring(encoding=STR_ENCODING)
 
@@ -43,13 +41,13 @@ class BioCWriter:
         unless encoding is "unicode", in which case a decoded
         string is returned (a unicode object in Python 2).
         '''
-        self._check_for_data()
-
         self.build()
 
+        xml_declaration = self._binary_encoding(encoding)
         s = tostring(self.root_tree,
                      encoding=encoding,
                      pretty_print=True,
+                     xml_declaration=xml_declaration,
                      doctype=self.doctype)
 
         return s
@@ -58,12 +56,26 @@ class BioCWriter:
         if self.collection is None:
             raise Exception('No data available.')
 
-    def write(self, filename=None):
-        """ Use this method to write the data in the PyBioC objects
-            to disk.
+    @staticmethod
+    def _binary_encoding(codec):
+        '''
+        Is this actually a binary encoding?
 
-            filename:   Output file path (optional argument; filename
-                        provided by __init__ used otherwise.)
+        The etree.tostring method accepts an encoding
+        parameter value "unicode" or str/unicode,
+        in which case the returned serialisation is a
+        decoded unicode string rather than an encoded
+        byte string.
+        '''
+        return not callable(codec) and codec != 'unicode'
+
+    def write(self, filename=None):
+        """
+        Write the data in the PyBioC objects to disk.
+
+        filename: Output file path (optional argument;
+                  filename provided through __init__ used
+                  otherwise.)
         """
         if filename is None:
             if self.filename is None:
@@ -80,8 +92,11 @@ class BioCWriter:
         Use this for large collections, as it avoids building
         the whole tree in memory.
         '''
-        # Temporarily remove the document nodes and reset the root tree.
+        self._check_for_data()
+
+        # Temporarily remove the document nodes and the root tree.
         documents = self.collection.documents
+        previous_tree = self.root_tree
         self.collection.documents = ()
         self.root_tree = None
 
@@ -89,8 +104,9 @@ class BioCWriter:
         # Split them into a head and tail portion.
         shell = self.tostring(encoding)
         tail = u'</collection>\n'
-        BOM = ''.encode(encoding)
-        if encoding != 'unicode':
+        BOM = ''
+        if self._binary_encoding(encoding):
+            BOM = ''.encode(encoding)
             tail = tail.encode(encoding).lstrip(BOM)
         head = shell[:-len(tail)]
 
@@ -109,11 +125,15 @@ class BioCWriter:
 
         yield tail
 
-        # Restore the collection object and reset the root tree again.
+        # Restore the collection object and the root tree.
         self.collection.documents = documents
-        self.root_tree = None
+        self.root_tree = previous_tree
 
     def build(self):
+        '''
+        Create an Element tree in memory.
+        '''
+        self._check_for_data()
         if self.root_tree is None:
             self._build_collection()
 
@@ -128,7 +148,8 @@ class BioCWriter:
         # document+
         self._build_documents(self.collection.documents, collection_elem)
 
-    def _build_infons(self, infons_dict, infons_parent_elem):
+    @staticmethod
+    def _build_infons(infons_dict, infons_parent_elem):
         for infon_key, infon_val in infons_dict.items():
             infons_parent_elem.append(E('infon'))
             infon_elem = infons_parent_elem.xpath('infon')[-1]
