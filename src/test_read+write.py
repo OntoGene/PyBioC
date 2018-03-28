@@ -1,25 +1,33 @@
 #!/usr/bin/env python
 
-from bioc import BioCReader
-from bioc import BioCWriter
+from bioc import BioCXMLReader
+from bioc import BioCJSONReader
+from bioc import BioCXMLWriter
+from bioc import BioCJSONWriter
 
-test_file = '../test_input/example_input.xml'
+test_xml = '../test_input/example_input.xml'
+test_json = '../test_input/example_input.json'
 dtd_file = '../test_input/BioC.dtd'
 
 
 def main():
-    bioc_reader = BioCReader(test_file, dtd_valid_file=dtd_file)
-    bioc_reader.read()
-    '''
-    sentences = bioc_reader.collection.documents[0].passages[0].sentences
-    for sentence in sentences:
-        print sentence.offset
-    '''
+    # Read XML, write JSON.
+    xml_reader = BioCXMLReader(test_xml, dtd_valid_file=dtd_file)
+    xml_reader.read()
 
-    bioc_writer = BioCWriter('output_bioc.xml')
-    bioc_writer.collection = bioc_reader.collection
-    bioc_writer.write()
-    print(bioc_writer)
+    json_writer = BioCJSONWriter()
+    json_writer.collection = xml_reader.collection
+    json_writer.write('output_bioc.json', indent=2)
+    print(json_writer)
+
+    # Read JSON, write XML.
+    json_reader = BioCJSONReader(test_json)
+    json_reader.read()
+
+    xml_writer = BioCXMLWriter('output_bioc.xml', xml_reader.collection)
+    xml_writer.write()
+    print(xml_writer)
+
 
 if __name__ == '__main__':
     main()

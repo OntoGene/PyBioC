@@ -2,7 +2,7 @@
 
 **[PyBioC][1] is a native Python library for reading and writing BioC XML data.**
 
-More information about BioC is available [online][2].
+More information about BioC is available at [sourceforge][2].
 
 
 ## Installation
@@ -36,9 +36,9 @@ valid BioC XML format.
 ### Generate BioC object for export
 
 ```python
-from bioc import BioCWriter, BioCCollection, BioCDocument, BioCPassage
+from bioc import BioCXMLWriter, BioCCollection, BioCDocument, BioCPassage
 
-writer = BioCWriter()
+writer = BioCXMLWriter()
 writer.collection = BioCCollection()
 collection = writer.collection
 collection.date = '20150301'

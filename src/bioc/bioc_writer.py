@@ -1,37 +1,58 @@
-__all__ = ['BioCWriter']
+__all__ = ['BioCXMLWriter', 'BioCJSONWriter']
 
 import sys
+import json
 
 from lxml.builder import E
 from lxml.etree import tostring
 
 
-# Resolve Python 2/3 difference regarding the special method __str__().
+# Resolve Python 2/3 differences.
 if sys.version_info < (3,):
+    # In Py2, use codecs.open rather than io.open, because the write() method
+    # of the latter doesn't accept native str values (only unicode).
+    from codecs import open
+    # Since BioCXMLWriter.__str__ calls lxml.etree.tostring, it must actually
+    # encode the serialised dump to get native str.
     STR_ENCODING = 'ascii'
 else:
     STR_ENCODING = 'unicode'
 
 
-class BioCWriter:
-
+class _BioCWriter(object):
+    '''
+    Base for BioC serializers.
+    '''
     def __init__(self, filename=None, collection=None):
-
-        self.root_tree = None
-
-        self.collection = None
-        self.doctype = '''<?xml version='1.0' encoding='UTF-8'?>'''
-        self.doctype += '''<!DOCTYPE collection SYSTEM 'BioC.dtd'>'''
+        self.collection = collection
         self.filename = filename
 
-        if collection is not None:
-            self.collection = collection
+    def _check_for_data(self):
+        if self.collection is None:
+            raise Exception('No data available.')
 
-        if filename is not None:
-            self.filename = filename
+    def _resolve_filename(self, filename):
+        if filename is None:
+            if self.filename is None:
+                raise Exception('No output file path provided.')
+            filename = self.filename
+        return filename
+
+
+class BioCXMLWriter(_BioCWriter):
+    '''
+    XML serializer for BioC objects.
+    '''
+
+    doctype = "<!DOCTYPE collection SYSTEM 'BioC.dtd'>"
+
+    def __init__(self, filename=None, collection=None):
+        super(BioCXMLWriter, self).__init__(filename, collection)
+        self.root_tree = None
 
     def __str__(self):
-        """ A BioCWriter object can be printed as string.
+        """
+        A BioCWriter object can be printed as string.
         """
         return self.tostring(encoding=STR_ENCODING)
 
@@ -43,32 +64,39 @@ class BioCWriter:
         unless encoding is "unicode", in which case a decoded
         string is returned (a unicode object in Python 2).
         '''
-        self._check_for_data()
-
         self.build()
 
+        xml_declaration = self._binary_encoding(encoding)
         s = tostring(self.root_tree,
                      encoding=encoding,
                      pretty_print=True,
+                     xml_declaration=xml_declaration,
                      doctype=self.doctype)
 
         return s
 
-    def _check_for_data(self):
-        if self.collection is None:
-            raise Exception('No data available.')
+    @staticmethod
+    def _binary_encoding(codec):
+        '''
+        Is this actually a binary encoding?
+
+        The etree.tostring method accepts an encoding
+        parameter value "unicode" or str/unicode,
+        in which case the returned serialisation is a
+        decoded unicode string rather than an encoded
+        byte string.
+        '''
+        return not callable(codec) and codec != 'unicode'
 
     def write(self, filename=None):
-        """ Use this method to write the data in the PyBioC objects
-            to disk.
-
-            filename:   Output file path (optional argument; filename
-                        provided by __init__ used otherwise.)
         """
-        if filename is None:
-            if self.filename is None:
-                raise Exception('No output file path provided.')
-            filename = self.filename
+        Write the data in the PyBioC objects to disk.
+
+        filename: Output file path (optional argument;
+                  filename provided through __init__ used
+                  otherwise.)
+        """
+        filename = self._resolve_filename(filename)
 
         with open(filename, 'wb') as f:
             f.write(self.tostring(encoding='UTF-8'))
@@ -80,8 +108,11 @@ class BioCWriter:
         Use this for large collections, as it avoids building
         the whole tree in memory.
         '''
-        # Temporarily remove the document nodes and reset the root tree.
+        self._check_for_data()
+
+        # Temporarily remove the document nodes and the root tree.
         documents = self.collection.documents
+        previous_tree = self.root_tree
         self.collection.documents = ()
         self.root_tree = None
 
@@ -89,8 +120,9 @@ class BioCWriter:
         # Split them into a head and tail portion.
         shell = self.tostring(encoding)
         tail = u'</collection>\n'
-        BOM = ''.encode(encoding)
-        if encoding != 'unicode':
+        BOM = ''
+        if self._binary_encoding(encoding):
+            BOM = ''.encode(encoding)
             tail = tail.encode(encoding).lstrip(BOM)
         head = shell[:-len(tail)]
 
@@ -109,11 +141,15 @@ class BioCWriter:
 
         yield tail
 
-        # Restore the collection object and reset the root tree again.
+        # Restore the collection object and the root tree.
         self.collection.documents = documents
-        self.root_tree = None
+        self.root_tree = previous_tree
 
     def build(self):
+        '''
+        Create an Element tree in memory.
+        '''
+        self._check_for_data()
         if self.root_tree is None:
             self._build_collection()
 
@@ -128,7 +164,8 @@ class BioCWriter:
         # document+
         self._build_documents(self.collection.documents, collection_elem)
 
-    def _build_infons(self, infons_dict, infons_parent_elem):
+    @staticmethod
+    def _build_infons(infons_dict, infons_parent_elem):
         for infon_key, infon_val in infons_dict.items():
             infons_parent_elem.append(E('infon'))
             infon_elem = infons_parent_elem.xpath('infon')[-1]
@@ -227,3 +264,66 @@ class BioCWriter:
             self._build_annotations(sentence.annotations, sentence_elem)
             # relation*
             self._build_relations(sentence.relations, sentence_elem)
+
+
+class BioCJSONWriter(_BioCWriter):
+    '''
+    JSON serializer for BioC objects.
+    '''
+    def __init__(self, filename=None, collection=None):
+        super(BioCJSONWriter, self).__init__(filename, collection)
+        self.root_dict = None
+
+    def __str__(self):
+        return str(self.tostring())
+
+    def tostring(self, **kwargs):
+        '''
+        Dump serialized BioC JSON to a string.
+        '''
+        self.build()
+        return json.dumps(self.root_dict, **kwargs)
+
+    def write(self, filename=None, **kwargs):
+        '''
+        Write serialised BioC JSON to disk.
+        '''
+        self.build()
+        filename = self._resolve_filename(filename)
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(self.root_dict, f, **kwargs)
+
+    def iterfragments(self, **kwargs):
+        '''
+        Iterate over chunks of serialised BioC JSON.
+
+        This method still creates an entire copy of the
+        structure in memory.
+        '''
+        self.build()
+        for chunk in json.JSONEncoder(**kwargs).iterencode(self.root_dict):
+            yield chunk
+
+    def build(self):
+        '''
+        Construct a nested dictionary in memory.
+        '''
+        self._check_for_data()
+        if self.root_dict is None:
+            self.root_dict = self._build_dict(self.collection)
+
+    def _build_dict(self, obj):
+        # Note:
+        # Unlike the DTD, Don Comeau's reference implementation of a BioC JSON
+        # converter does not enforce mutual exclusion of either sentences
+        # or text + annotations inside passage elements.
+        dict_ = {}
+        for label, value in obj.__dict__.items():
+            if label == 'text' and value is None:
+                value = ''  # avoid None/null
+            elif label in ('offset', 'length'):
+                value = int(value)
+            elif isinstance(value, list):
+                value = [self._build_dict(c) for c in value]
+            dict_[label] = value
+        return dict_
